@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mente Lógica — Desafio Mental</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Arial,sans-serif;color:#fff;background:linear-gradient(135deg,#10102b,#25215c,#542b80)}
+.card{width:100%;max-width:720px;background:#171633;border:1px solid #514c91;border-radius:24px;padding:28px;box-shadow:0 15px 50px #0005}
+h1,h2{text-align:center;color:#d4c5ff}h1{margin:8px 0}p{text-align:center;line-height:1.5;color:#d4d1ee}
+.characters{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}.character{background:#29264e;border:2px solid transparent;border-radius:16px;padding:14px 6px;color:#fff;cursor:pointer}.character.selected{border-color:#c4a7ff;background:#40366d}.avatar{font-size:42px;display:block;margin-bottom:8px}.character small{color:#d4d1ee}
+label{display:block;margin:18px 0 8px;color:#ded8ff}select{width:100%;padding:13px;border-radius:10px;background:#211f42;color:white;border:1px solid #7770bd;font-size:16px}
+button{font-size:15px;font-weight:bold;border:0;border-radius:12px;padding:13px;cursor:pointer}.primary{width:100%;margin-top:18px;background:linear-gradient(90deg,#8066ff,#ba69ff);color:white}.hidden{display:none!important}
+.stats{display:flex;gap:10px;margin:18px 0}.stat{flex:1;background:#29264e;border-radius:12px;padding:12px;text-align:center;font-size:13px}.stat strong{display:block;color:#d5c5ff;font-size:21px;margin-top:5px}
+.topline{display:flex;justify-content:space-between;gap:12px;color:#d0c9ff;font-size:14px}.bar{height:9px;background:#39355d;border-radius:20px;overflow:hidden;margin:12px 0 24px}.fill{height:100%;width:100%;background:linear-gradient(90deg,#9175ff,#e3a4ff)}
+.question{font-size:22px;line-height:1.5}.answers{display:grid;gap:10px}.answer{width:100%;text-align:left;background:#2c2952;border:1px solid #494477;color:white;line-height:1.4}.answer:disabled{opacity:1}.correct{background:#185b49!important;border-color:#43d6a0}.wrong{background:#713443!important;border-color:#ff8095}
+.feedback{background:#29264e;border-radius:12px;padding:14px;margin-top:15px;line-height:1.5}.actions{display:flex;gap:10px;margin-top:15px}.actions button{flex:1}.hint{background:#39345f;color:#e2d8ff}.next{background:#a77aff;color:#17102e}.timer{font-size:19px;font-weight:bold}.warning{color:#ffb4a9}.result{text-align:center}.result .avatar{font-size:60px}
+@media(max-width:480px){.card{padding:20px 15px}.question{font-size:19px}.characters{gap:6px}.character{font-size:13px}.actions{flex-direction:column}}
+</style>
+</head>
+<body>
+<main class="card">
+<section id="start">
+<div style="text-align:center;font-size:42px">🧠</div>
+<h1>Mente Lógica</h1>
+<p>Escolha seu personagem, corra contra o tempo e resolva os desafios!</p>
+<h2>Escolha seu personagem</h2>
+<div class="characters" id="characters">
+<button class="character selected" data-name="Luna"><span class="avatar">🧙‍♀️</span>Luna<br><small>Mestra dos enigmas</small></button>
+<button class="character" data-name="Theo"><span class="avatar">🕵️‍♂️</span>Theo<br><small>Detetive lógico</small></button>
+<button class="character" data-name="Max"><span class="avatar">🤖</span>Max<br><small>Robô genial</small></button>
+</div>
+<label for="difficulty">Dificuldade</label>
+<select id="difficulty"><option value="facil">🟢 Fácil</option><option value="medio">🟡 Médio</option><option value="dificil">🔴 Difícil</option></select>
+<p>Você terá <strong>60 segundos</strong> para responder às 5 perguntas.</p>
+<button class="primary" id="startBtn">Começar jogo 🚀</button>
+</section>
+<section id="game" class="hidden">
+<div class="topline"><span id="who">🧙‍♀️ Luna</span><span class="timer" id="timer">⏱️ 60s</span></div>
+<div class="bar"><div class="fill" id="timeFill"></div></div>
+<div class="topline"><span id="levelLabel">Nível fácil</span><span id="progressText">Pergunta 1/5</span></div>
+<div class="stats"><div class="stat">Pontos<strong id="score">0</strong></div><div class="stat">Acertos<strong id="hits">0</strong></div></div>
+<h2 class="question" id="question"></h2>
+<div class="answers" id="answers"></div>
+<div class="feedback hidden" id="feedback" aria-live="polite"></div>
+<div class="actions"><button class="hint" id="hintBtn">💡 Dica</button><button class="next hidden" id="nextBtn">Próxima ➜</button></div>
+</section>
+<section id="result" class="result hidden">
+<div class="avatar" id="resultAvatar">🏆</div><h1 id="resultTitle">Desafio concluído!</h1><p id="resultText"></p>
+<div class="stats"><div class="stat">Pontuação<strong id="finalScore">0</strong></div><div class="stat">Acertos<strong id="finalHits">0/5</strong></div></div>
+<button class="primary" id="againBtn">Jogar novamente 🔄</button>
+</section>
+</main>
+<script>
+const bank={
+facil:[
+{q:"Qual número vem a seguir: 2, 4, 6, 8, __?",o:["9","10","12","14"],a:1,h:"Os números aumentam sempre pela mesma quantidade.",e:"A sequência aumenta de 2 em 2. O próximo é 10."},
+{q:"Ana tem 3 maçãs e ganha mais 4. Quantas tem?",o:["6","7","8","9"],a:1,h:"Some as maçãs que ela tinha às que ganhou.",e:"3 + 4 = 7 maçãs."},
+{q:"Qual figura não tem lados retos?",o:["Triângulo","Quadrado","Círculo","Retângulo"],a:2,h:"Pense na figura redonda.",e:"O círculo não possui lados retos."},
+{q:"Se hoje é segunda-feira, daqui a 3 dias será…",o:["Terça","Quarta","Quinta","Sexta"],a:2,h:"Conte terça como o primeiro dia.",e:"Terça, quarta, quinta: são 3 dias."},
+{q:"Complete: 5, 10, 15, 20, __.",o:["22","24","25","30"],a:2,h:"Some 5 a cada número.",e:"O próximo é 25."}
+],
+medio:[
+{q:"Qual número vem a seguir: 3, 6, 12, 24, __?",o:["30","36","42","48"],a:3,h:"Cada número é multiplicado por 2.",e:"24 × 2 = 48."},
+{q:"Todos os gatos são animais. Mimi é um gato. Logo…",o:["Mimi é um animal","Todos animais são gatos","Mimi é um cachorro","Nada podemos concluir"],a:0,h:"Use as duas informações do enunciado.",e:"Se todo gato é animal e Mimi é gato, Mimi é animal."},
+{q:"Uma caixa tem 4 pares de meias. Quantas meias há?",o:["4","6","8","12"],a:2,h:"Um par tem duas meias.",e:"4 × 2 = 8 meias."},
+{q:"Qual número falta: 1, 4, 9, 16, __?",o:["20","24","25","36"],a:2,h:"São quadrados: 1², 2², 3², 4²…",e:"5² = 25."},
+{q:"Pedro é mais velho que Lucas. Lucas é mais velho que Caio. Quem é mais novo?",o:["Pedro","Lucas","Caio","Não dá para saber"],a:2,h:"Organize os três por idade.",e:"Caio é mais novo que Lucas e Pedro."}
+],
+dificil:[
+{q:"Complete: 2, 6, 12, 20, 30, __.",o:["36","40","42","44"],a:2,h:"As diferenças são 4, 6, 8 e 10.",e:"A próxima diferença é 12; 30 + 12 = 42."},
+{q:"5 máquinas fazem 5 peças em 5 minutos. Quanto 100 máquinas levam para fazer 100 peças?",o:["5 minutos","20 minutos","100 minutos","500 minutos"],a:0,h:"Todas as máquinas trabalham ao mesmo tempo.",e:"Cada máquina faz uma peça em 5 minutos; juntas fazem 100 em 5 minutos."},
+{q:"Qual número vem a seguir: 1, 1, 2, 3, 5, 8, __?",o:["11","12","13","15"],a:2,h:"Some os dois números anteriores.",e:"5 + 8 = 13."},
+{q:"Um relógio marca 3h15. Qual é o menor ângulo entre os ponteiros?",o:["0°","7,5°","15°","30°"],a:1,h:"O ponteiro das horas já avançou um pouco após o 3.",e:"O ponteiro dos minutos está em 90° e o das horas em 97,5°. Diferença: 7,5°."},
+{q:"Se todos os blips são zargs e nenhum zarg é azul, um blip pode ser azul?",o:["Sim, sempre","Não","Só à noite","Não dá para saber"],a:1,h:"Os blips pertencem ao grupo dos zargs.",e:"Nenhum zarg é azul, então nenhum blip pode ser azul."}
+]};
+const avatars={Luna:"🧙‍♀️",Theo:"🕵️‍♂️",Max:"🤖"};
+let character="Luna",level="facil",index=0,score=0,hits=0,remaining=60,tick=null,answered=false,hintUsed=false;
+const $=id=>document.getElementById(id);
+$("characters").addEventListener("click",e=>{const b=e.target.closest("button[data-name]");if(!b)return;character=b.dataset.name;document.querySelectorAll(".character").forEach(x=>x.classList.toggle("selected",x===b));});
+function screen(id){["start","game","result"].forEach(x=>$(x).classList.toggle("hidden",x!==id));}
+function start(){level=$("difficulty").value;index=0;score=0;hits=0;remaining=60;clearInterval(tick);$("who").textContent=avatars[character]+" "+character;$("levelLabel").textContent="Nível "+({facil:"fácil",medio:"médio",dificil:"difícil"}[level]);$("score").textContent=0;$("hits").textContent=0;screen("game");render();updateTimer();tick=setInterval(()=>{remaining--;updateTimer();if(remaining<=0){clearInterval(tick);finish(true);}},1000);}
+function updateTimer(){$("timer").textContent="⏱️ "+remaining+"s";$("timer").classList.toggle("warning",remaining<=15);$("timeFill").style.width=(remaining/60*100)+"%";$("timeFill").style.background=remaining<=15?"#ff758f":"linear-gradient(90deg,#9175ff,#e3a4ff)";}
+function render(){const item=bank[level][index];answered=false;hintUsed=false;$("progressText").textContent="Pergunta "+(index+1)+"/5";$("question").textContent=item.q;$("answers").innerHTML="";$("feedback").classList.add("hidden");$("hintBtn").classList.remove("hidden");$("hintBtn").disabled=false;$("hintBtn").textContent="💡 Dica";$("nextBtn").classList.add("hidden");item.o.forEach((op,i)=>{const b=document.createElement("button");b.className="answer";b.textContent=String.fromCharCode(65+i)+") "+op;b.addEventListener("click",()=>choose(i));$("answers").appendChild(b);});}
+function choose(n){if(answered)return;answered=true;const item=bank[level][index],buttons=$("answers").querySelectorAll("button"),ok=n===item.a;buttons.forEach((b,i)=>{b.disabled=true;if(i===item.a)b.classList.add("correct");else if(i===n)b.classList.add("wrong");});if(ok){hits++;score+=hintUsed?10:20;}$("score").textContent=score;$("hits").textContent=hits;$("feedback").textContent=(ok?"✅ Correto! ":"❌ Quase! ")+item.e;$("feedback").classList.remove("hidden");$("hintBtn").classList.add("hidden");$("nextBtn").classList.remove("hidden");$("nextBtn").textContent=index===4?"Ver resultado 🏆":"Próxima ➜";}
+function hint(){if(answered||hintUsed)return;hintUsed=true;$("feedback").textContent="💡 Dica: "+bank[level][index].h;$("feedback").classList.remove("hidden");$("hintBtn").disabled=true;$("hintBtn").textContent="Dica usada";}
+function next(){if(index<4){index++;render();}else{finish(false);}}
+function finish(timeUp){clearInterval(tick);screen("result");$("resultAvatar").textContent=avatars[character];$("resultTitle").textContent=timeUp?"⏰ O tempo acabou!":"🏆 Desafio concluído!";$("resultText").textContent=character+" acertou "+hits+" de 5 perguntas e fez "+score+" pontos."+(timeUp?" O tempo terminou.":" Você terminou antes do fim do tempo!");$("finalScore").textContent=score;$("finalHits").textContent=hits+"/5";}
+$("startBtn").addEventListener("click",start);$("hintBtn").addEventListener("click",hint);$("nextBtn").addEventListener("click",next);$("againBtn").addEventListener("click",()=>{clearInterval(tick);screen("start");});
+</script>
+</body>
+</html>
