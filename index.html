@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mente Lógica — Desafio de Raciocínio</title>
+<style>
+:root{--bg:#0b1020;--panel:#151d35;--panel2:#1c2745;--text:#f4f6ff;--muted:#aab5d2;--cyan:#55e6ff;--purple:#a78bfa;--green:#65e6a5;--red:#ff8295}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#202955 0%,#0b1020 58%);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text);padding:22px}
+button{font:inherit;cursor:pointer;border:0;border-radius:13px;padding:13px 18px;font-weight:750;transition:transform .15s,filter .15s}button:hover{filter:brightness(1.1);transform:translateY(-1px)}button:focus-visible{outline:3px solid white;outline-offset:3px}
+.primary{background:linear-gradient(100deg,var(--cyan),#9cf4dc);color:#10172c}.secondary{background:#293557;color:var(--text);border:1px solid #3c4b73}.ghost{background:transparent;color:var(--muted);border:1px solid #3c4b73}
+.wrap{max-width:920px;margin:auto}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:25px}.brand{font-weight:900;letter-spacing:1.5px}.brand span{color:var(--cyan)}.pill{border:1px solid #354366;border-radius:99px;padding:7px 12px;color:var(--muted);font-size:.85rem}
+.screen{display:none}.screen.active{display:block}.hero{text-align:center;padding:32px 0 22px}.eyebrow{color:var(--cyan);font-size:.78rem;letter-spacing:3px;font-weight:900}.hero h1{font-size:clamp(2.5rem,7vw,4.8rem);line-height:1;margin:13px 0;background:linear-gradient(90deg,#fff,var(--cyan),var(--purple));background-clip:text;color:transparent}.hero p{max-width:620px;margin:0 auto;color:var(--muted);line-height:1.7}
+.characters{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0}.character,.level,.questionbox,.resultbox{background:linear-gradient(150deg,var(--panel),#10172b);border:1px solid #2d3a5d;border-radius:20px;padding:20px}.character{text-align:center}.avatar{font-size:2.8rem}.character h3{margin:8px 0 4px}.character p{margin:0;color:var(--muted);font-size:.9rem}.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.level{cursor:pointer;text-align:left;color:var(--text);width:100%;border:1px solid #2d3a5d}.level strong{display:block;font-size:1.1rem;margin:6px 0}.level small{color:var(--muted);line-height:1.5}.level .emoji{font-size:1.7rem}.level:hover,.level:focus-visible{border-color:var(--cyan)}
+.sectiontitle{font-size:1.25rem;margin:26px 0 12px}.best{color:var(--muted);font-size:.9rem;text-align:center;margin-top:20px}
+.gamehead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:20px 0}.progress{height:8px;background:#263252;border-radius:20px;overflow:hidden;margin:10px 0 22px}.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .25s}
+.questionbox{padding:clamp(20px,5vw,34px)}.characterline{display:flex;align-items:center;gap:13px;margin-bottom:20px}.characterline .avatar{font-size:2.5rem}.characterline small{color:var(--muted)}.question{font-size:clamp(1.2rem,3vw,1.65rem);font-weight:800;line-height:1.45;margin:10px 0 22px}.answers{display:grid;gap:10px}.answer{background:#202b49;color:var(--text);border:1px solid #3a496d;text-align:left;display:flex;gap:12px;align-items:center}.answer .letter{display:grid;place-items:center;min-width:32px;height:32px;border-radius:9px;background:#344264;color:var(--cyan)}.answer.correct{border-color:var(--green);background:#173b39}.answer.wrong{border-color:var(--red);background:#432534}.answer:disabled{cursor:default;transform:none}
+.feedback{margin-top:16px;padding:14px;border-radius:12px;background:#202b49;color:var(--muted);line-height:1.6;display:none}.feedback.show{display:block}.feedback strong{color:var(--text)}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}.actions button{flex:1}
+.resultbox{text-align:center;padding:clamp(24px,5vw,44px)}.resultscore{font-size:3.5rem;font-weight:950;color:var(--cyan);margin:8px}.resultbox p{color:var(--muted);line-height:1.7}.resultactions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+footer{text-align:center;color:#7784a5;font-size:.8rem;padding:32px 0 8px}
+@media(max-width:650px){body{padding:14px}.characters,.levels{grid-template-columns:1fr}.character{display:flex;align-items:center;text-align:left;gap:14px}.avatar{min-width:50px}.hero{padding-top:20px}.top{margin-bottom:10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="brand">🧠 MENTE <span>LÓGICA</span></div><div class="pill">Jogo de raciocínio</div></header>
+<main>
+<section id="home" class="screen active">
+<div class="hero"><div class="eyebrow">PENSE • DESCUBRA • EVOLUA</div><h1>Desafie sua mente.</h1><p>Resolva enigmas, encontre padrões e teste sua lógica. Escolha um nível, conte com os personagens e tente alcançar a pontuação máxima!</p></div>
+<div class="characters">
+<div class="character"><div class="avatar">🕵️</div><div><h3>Nexus</h3><p>Detetive dos padrões. Adora observar detalhes.</p></div></div>
+<div class="character"><div class="avatar">🤖</div><div><h3>Byte</h3><p>Mestre dos números e das sequências.</p></div></div>
+<div class="character"><div class="avatar">🧙</div><div><h3>Oráculo</h3><p>Tem dicas para ajudar você a pensar.</p></div></div>
+</div>
+<h2 class="sectiontitle">Escolha sua dificuldade</h2>
+<div class="levels">
+<button class="level" onclick="startGame('easy')"><span class="emoji">🌱</span><strong>Fácil</strong><small>Comece com padrões e enigmas rápidos.</small></button>
+<button class="level" onclick="startGame('medium')"><span class="emoji">⚡</span><strong>Médio</strong><small>Desafios que exigem atenção e estratégia.</small></button>
+<button class="level" onclick="startGame('hard')"><span class="emoji">🔥</span><strong>Difícil</strong><small>Teste seus limites com lógica avançada.</small></button>
+</div>
+<div class="best" id="bestScores">Seus recordes aparecerão aqui após jogar.</div>
+</section>
+<section id="game" class="screen">
+<div class="gamehead"><button class="ghost" onclick="goHome()">← Menu</button><div class="pill" id="levelLabel">NÍVEL FÁCIL · FASE 1/5</div><div class="pill">⭐ Pontos: <span id="score">0</span></div></div>
+<div class="progress"><div id="progressBar"></div></div>
+<div class="questionbox">
+<div class="characterline"><div class="avatar" id="guideAvatar">🕵️</div><div><strong id="guideName">Nexus</strong><br><small id="guideLine">Observe com atenção!</small></div></div>
+<div class="question" id="questionText"></div>
+<div class="answers" id="answers"></div>
+<div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+<div class="actions"><button class="secondary" id="hintBtn" onclick="showHint()">💡 Pedir uma dica</button><button class="primary" id="nextBtn" onclick="nextQuestion()" style="display:none">Próxima pergunta →</button></div>
+</div>
+</section>
+<section id="results" class="screen"><div class="resultbox"><div style="font-size:3.5rem" id="resultEmoji">🏆</div><div class="eyebrow">DESAFIO CONCLUÍDO</div><h1 id="resultTitle">Mandou bem!</h1><div class="resultscore" id="finalScore">0</div><strong id="scoreCaption">pontos conquistados</strong><p id="resultMessage"></p><div class="resultactions"><button class="primary" id="againBtn" onclick="restartLevel()">🔁 Jogar novamente</button><button class="secondary" id="nextLevelBtn" onclick="goNextLevel()">Próximo nível →</button><button class="ghost" onclick="goHome()">Menu principal</button></div></div></section>
+</main>
+<footer>MENTE LÓGICA · Treine seu raciocínio, uma pergunta de cada vez.</footer>
+</div>
+<script>
+"use strict";
+const levels={
+ easy:{name:"FÁCIL",questions:[
+ {q:"Qual número completa a sequência? 2, 4, 6, 8, __",a:["9","10","12","14"],correct:1,hint:"Os números aumentam sempre pela mesma quantidade.",exp:"A sequência aumenta de 2 em 2: 2, 4, 6, 8, 10."},
+ {q:"Todos os gatos são animais. Mimi é um gato. O que podemos concluir?",a:["Mimi é um animal","Todos os animais são gatos","Mimi é um cachorro","Não é possível concluir nada"],correct:0,hint:"Use a primeira informação junto com a segunda.",exp:"Se todos os gatos são animais e Mimi é um gato, então Mimi é um animal."},
+ {q:"Qual item não combina com os outros?",a:["Maçã","Banana","Uva","Cadeira"],correct:3,hint:"Três opções podem ser comidas.",exp:"Cadeira é um móvel; as outras opções são frutas."},
+ {q:"Se hoje é segunda-feira, que dia será daqui a 3 dias?",a:["Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira"],correct:2,hint:"Conte três dias depois de segunda.",exp:"Terça (1), quarta (2), quinta (3)."},
+ {q:"Ana é mais alta que Bia. Bia é mais alta que Caio. Quem é o mais baixo?",a:["Ana","Bia","Caio","Não dá para saber"],correct:2,hint:"Organize as pessoas da mais alta para a mais baixa.",exp:"Ana é mais alta que Bia, e Bia é mais alta que Caio. Portanto, Caio é o mais baixo."}]},
+ medium:{name:"MÉDIO",questions:[
+ {q:"Qual número vem a seguir? 3, 6, 12, 24, __",a:["30","36","48","42"],correct:2,hint:"Observe o que acontece com cada número para chegar ao próximo.",exp:"Cada número é multiplicado por 2. Então 24 × 2 = 48."},
+ {q:"Se 5 máquinas fazem 5 peças em 5 minutos, quanto tempo 1 máquina leva para fazer 1 peça?",a:["1 minuto","5 minutos","10 minutos","25 minutos"],correct:1,hint:"Pense no trabalho de uma única máquina, não no total.",exp:"Cada máquina faz uma peça em 5 minutos."},
+ {q:"Qual letra continua a sequência? A, C, E, G, __",a:["H","I","J","K"],correct:1,hint:"Observe a posição das letras no alfabeto.",exp:"A sequência pula uma letra cada vez: A, C, E, G, I."},
+ {q:"Um livro e uma caneta custam R$ 11. O livro custa R$ 9 a mais que a caneta. Quanto custa a caneta?",a:["R$ 1","R$ 2","R$ 3","R$ 4"],correct:0,hint:"Se a caneta custa x, o livro custa x + 9. Juntos custam 11.",exp:"Caneta = R$ 1 e livro = R$ 10. Juntos custam R$ 11, e a diferença é R$ 9."},
+ {q:"Pedro chegou antes de Lucas. Lucas chegou antes de Marina. Quem chegou por último?",a:["Pedro","Lucas","Marina","Não dá para saber"],correct:2,hint:"Coloque as chegadas em ordem.",exp:"A ordem é Pedro, Lucas e Marina. Marina chegou por último."}]},
+ hard:{name:"DIFÍCIL",questions:[
+ {q:"Qual número completa o padrão? 1, 1, 2, 3, 5, 8, __",a:["11","12","13","15"],correct:2,hint:"Cada número é a soma dos dois anteriores.",exp:"8 + 5 = 13. É a sequência de Fibonacci."},
+ {q:"Três caixas estão etiquetadas 'Maçãs', 'Laranjas' e 'Mistas'. Todas as etiquetas estão erradas. Tirando uma fruta de uma caixa, qual você deve escolher primeiro?",a:["A caixa 'Maçãs'","A caixa 'Laranjas'","A caixa 'Mistas'","Qualquer uma"],correct:2,hint:"A caixa chamada 'Mistas' não pode ser mista, pois todas as etiquetas estão erradas.",exp:"Tire da caixa 'Mistas'. Como a etiqueta está errada, ela contém apenas um tipo de fruta; essa informação permite corrigir as outras duas etiquetas."},
+ {q:"Se 2 → 6, 3 → 12 e 4 → 20, então 5 → ?",a:["25","28","30","35"],correct:2,hint:"Tente multiplicar cada número por ele mesmo mais um.",exp:"A regra é n × (n + 1): 5 × 6 = 30."},
+ {q:"Quatro pessoas apertam as mãos umas das outras uma única vez. Quantos apertos acontecem?",a:["4","5","6","8"],correct:2,hint:"Conte cada par de pessoas uma única vez.",exp:"Há 6 pares diferentes entre quatro pessoas: 4 × 3 ÷ 2 = 6."},
+ {q:"Você tem dois pavios. Cada um demora exatamente 60 minutos para queimar, mas queima de forma irregular. Como medir 45 minutos?",a:["Acender um pavio numa ponta e outro nas duas pontas","Acender o primeiro nas duas pontas e o segundo numa ponta; quando o primeiro acabar, acender a outra ponta do segundo","Acender os dois numa ponta e esperar","Não é possível"],correct:1,hint:"Queimar um pavio pelas duas pontas faz com que ele termine em 30 minutos, mesmo de forma irregular.",exp:"O primeiro pavio, aceso nas duas pontas, termina em 30 minutos. Nesse instante, acenda a outra ponta do segundo: o tempo restante dele será de 15 minutos. Total: 45 minutos."}]}
+};
+const $=id=>document.getElementById(id);
+let currentLevel="easy",index=0,score=0,answered=false,hintUsed=false;
+const guides=[{name:"Nexus",avatar:"🕵️",line:"Observe os detalhes e encontre a pista!"},{name:"Byte",avatar:"🤖",line:"Vamos analisar isso passo a passo."},{name:"Oráculo",avatar:"🧙",line:"Pense com calma. Você consegue!"}];
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");window.scrollTo({top:0,behavior:"smooth"});}
+function startGame(level){if(!levels[level])return;currentLevel=level;index=0;score=0;showScreen("game");renderQuestion();}
+function renderQuestion(){
+ const data=levels[currentLevel].questions[index];answered=false;hintUsed=false;
+ $("levelLabel").textContent="NÍVEL "+levels[currentLevel].name+" · FASE "+(index+1)+"/"+levels[currentLevel].questions.length;
+ $("score").textContent=score;$("progressBar").style.width=(index/levels[currentLevel].questions.length*100)+"%";
+ const guide=guides[index%guides.length];$("guideAvatar").textContent=guide.avatar;$("guideName").textContent=guide.name;$("guideLine").textContent=guide.line;
+ $("questionText").textContent=data.q;$("answers").innerHTML="";$("feedback").className="feedback";$("feedback").textContent="";
+ $("hintBtn").disabled=false;$("hintBtn").style.display="inline-block";$("hintBtn").textContent="💡 Pedir uma dica";$("nextBtn").style.display="none";
+ data.a.forEach((answer,i)=>{const b=document.createElement("button");b.className="answer";b.innerHTML='<span class="letter">'+String.fromCharCode(65+i)+'</span><span></span>';b.querySelector("span:last-child").textContent=answer;b.addEventListener("click",()=>chooseAnswer(i));$("answers").appendChild(b);});
+}
+function chooseAnswer(choice){if(answered)return;answered=true;const data=levels[currentLevel].questions[index];const buttons=[...$("answers").querySelectorAll("button")];buttons.forEach((b,i)=>{b.disabled=true;if(i===data.correct)b.classList.add("correct");if(i===choice&&i!==data.correct)b.classList.add("wrong");});
+if(choice===data.correct){score+=hintUsed?7:10;$("feedback").innerHTML="<strong>✅ Resposta correta!</strong><br>"+escapeHTML(data.exp)+(hintUsed?"<br><small>Você usou uma dica: 7 pontos nesta questão.</small>":"");}else{$("feedback").innerHTML="<strong>❌ Não foi dessa vez!</strong><br>"+escapeHTML(data.exp);}
+$("feedback").classList.add("show");$("score").textContent=score;$("hintBtn").style.display="none";$("nextBtn").style.display="inline-block";$("nextBtn").textContent=index===levels[currentLevel].questions.length-1?"Ver resultado →":"Próxima pergunta →";}
+function showHint(){if(answered||hintUsed)return;hintUsed=true;const data=levels[currentLevel].questions[index];$("feedback").innerHTML="<strong>💡 Dica do Oráculo:</strong><br>"+escapeHTML(data.hint);$("feedback").classList.add("show");$("hintBtn").textContent="Dica revelada";$("hintBtn").disabled=true;}
+function nextQuestion(){if(!answered)return;index++;if(index<levels[currentLevel].questions.length){renderQuestion();}else{finishGame();}}
+function finishGame(){showScreen("results");const total=levels[currentLevel].questions.length*10;const percent=Math.round(score/total*100);$("finalScore").textContent=score;$("resultEmoji").textContent=percent>=80?"🏆":percent>=50?"🧠":"💪";$("resultTitle").textContent=percent>=80?"Mente brilhante!":percent>=50?"Muito bem!":"Continue treinando!";$("resultMessage").textContent="Você concluiu o nível "+levels[currentLevel].name.toLowerCase()+" e acertou "+Math.round(score/10)+" questão(ões) sem dica equivalente em pontos. Cada desafio é uma chance de aprender.";const key="menteLogicaRecord_"+currentLevel;const previous=Number(localStorage.getItem(key)||0);if(score>previous)localStorage.setItem(key,String(score));$("nextLevelBtn").style.display=currentLevel==="hard"?"none":"inline-block";$("nextLevelBtn").textContent="Próximo nível →";updateRecords();}
+function restartLevel(){startGame(currentLevel);}
+function goNextLevel(){const next={easy:"medium",medium:"hard",hard:"hard"}[currentLevel];startGame(next);}
+function goHome(){showScreen("home");updateRecords();}
+function updateRecords(){const labels=[["easy","Fácil"],["medium","Médio"],["hard","Difícil"]];const records=labels.map(([key,name])=>name+": "+(localStorage.getItem("menteLogicaRecord_"+key)||"0")+" pts").join("　•　");$("bestScores").textContent="🏅 Seus recordes: "+records;}
+function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+updateRecords();
+</script>
+</body>
+</html>
