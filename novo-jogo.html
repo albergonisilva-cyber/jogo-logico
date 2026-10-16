@@ -12,7 +12,7 @@ body:before,body:after{content:"";position:fixed;width:240px;height:240px;border
 body:before{background:#9274ff;top:-70px;right:8%}body:after{background:#d06cff;bottom:-90px;left:3%}
 .card{position:relative;z-index:1;width:100%;max-width:740px;background:linear-gradient(145deg,rgba(30,28,64,.96),rgba(18,17,42,.97));border:1px solid rgba(191,172,255,.27);border-radius:28px;padding:clamp(20px,5vw,38px);box-shadow:0 25px 80px #05040d99,inset 0 1px 0 #ffffff12;backdrop-filter:blur(18px);overflow:hidden}
 .card:before{content:"";position:absolute;top:0;left:12%;right:12%;height:2px;background:linear-gradient(90deg,transparent,#c9adff,#f0baff,transparent)}
-h1,h2{text-align:center;color:#e0d3ff;letter-spacing:-.035em}h1{margin:8px 0;font-size:clamp(27px,5vw,38px);text-shadow:0 0 28px #a88aff35}h2{font-size:20px;margin:22px 0 12px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid #8f7ad855;border-radius:999px;background:#8f7ad81c;color:#dfd4ff;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin:0 auto 10px} .hero-mark{width:76px;height:76px;margin:0 auto 15px;display:grid;place-items:center;border-radius:24px;background:linear-gradient(145deg,#a78bfa33,#e879f933);border:1px solid #c4b5fd55;box-shadow:0 12px 36px #8b5cf633;font-size:39px} .difficulty-note{padding:12px 14px;margin:12px 0 0;border:1px solid #8e7cbd55;border-radius:13px;background:#a78bfa12;color:#e5dcff;font-size:13px} .difficulty-note strong{color:#fff} .card{box-shadow:0 30px 90px #05040dcc,inset 0 1px 0 #ffffff17} .character{box-shadow:0 8px 22px #05030d22} .stat{box-shadow:inset 0 1px 0 #ffffff08} .answer{box-shadow:0 5px 15px #08061722} .bar{height:11px;border:1px solid #ffffff0c} .fill{box-shadow:0 0 18px #b794ff88} h1,h2{text-align:center;color:#e0d3ff;letter-spacing:-.035em}h1{margin:8px 0;font-size:clamp(27px,5vw,38px);text-shadow:0 0 28px #a88aff35}h2{font-size:20px;margin:22px 0 12px}
 p{text-align:center;line-height:1.65;color:var(--muted)}
 .characters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:22px 0}
 .character{min-width:0;background:linear-gradient(145deg,#29264f,#211f42);border:1px solid #514b7d;border-radius:18px;padding:17px 8px;color:#fff;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s,background .2s}
@@ -66,8 +66,8 @@ button:focus-visible{outline:3px solid #fff;outline-offset:3px}
 <button class="character" data-name="Max"><span class="avatar">🤖</span>Max<br><small>Robô genial</small></button>
 </div>
 <label for="difficulty">Dificuldade</label>
-<select id="difficulty"><option value="facil">🟢 Fácil</option><option value="medio">🟡 Médio</option><option value="dificil">🔴 Difícil</option></select>
-<p>Você terá <strong>60 segundos</strong> para responder às 5 perguntas.</p>
+<select id="difficulty"><option value="facil">🟢 Fácil · 90 segundos</option><option value="medio">🟡 Médio · 60 segundos</option><option value="dificil">🔴 Difícil · 40 segundos</option></select>
+<div class="difficulty-note" id="difficultyInfo">⏳ Você terá <strong>90 segundos</strong> para resolver as 5 perguntas deste nível.</div>
 <button class="primary" id="startBtn">Começar jogo 🚀</button>
 </section>
 <section id="game" class="hidden">
@@ -110,18 +110,18 @@ dificil:[
 {q:"Se todos os blips são zargs e nenhum zarg é azul, um blip pode ser azul?",o:["Sim, sempre","Não","Só à noite","Não dá para saber"],a:1,h:"Os blips pertencem ao grupo dos zargs.",e:"Nenhum zarg é azul, então nenhum blip pode ser azul."}
 ]};
 const avatars={Luna:"🧙‍♀️",Theo:"🕵️‍♂️",Max:"🤖"};
-let character="Luna",level="facil",index=0,score=0,hits=0,remaining=60,tick=null,answered=false,hintUsed=false;
+const timeLimits={facil:90,medio:60,dificil:40};\nlet character="Luna",level="facil",index=0,score=0,hits=0,remaining=90,maxTime=90,tick=null,answered=false,hintUsed=false;
 const $=id=>document.getElementById(id);
 $("characters").addEventListener("click",e=>{const b=e.target.closest("button[data-name]");if(!b)return;character=b.dataset.name;document.querySelectorAll(".character").forEach(x=>x.classList.toggle("selected",x===b));});
 function screen(id){["start","game","result"].forEach(x=>$(x).classList.toggle("hidden",x!==id));}
-function start(){level=$("difficulty").value;index=0;score=0;hits=0;remaining=60;clearInterval(tick);$("who").textContent=avatars[character]+" "+character;$("levelLabel").textContent="Nível "+({facil:"fácil",medio:"médio",dificil:"difícil"}[level]);$("score").textContent=0;$("hits").textContent=0;screen("game");render();updateTimer();tick=setInterval(()=>{remaining--;updateTimer();if(remaining<=0){clearInterval(tick);finish(true);}},1000);}
+function start(){level=$("difficulty").value;index=0;score=0;hits=0;maxTime=timeLimits[level];remaining=maxTime;clearInterval(tick);$("who").textContent=avatars[character]+" "+character;$("levelLabel").textContent="Nível "+({facil:"fácil",medio:"médio",dificil:"difícil"}[level]);$("score").textContent=0;$("hits").textContent=0;screen("game");render();updateTimer();tick=setInterval(()=>{remaining--;updateTimer();if(remaining<=0){clearInterval(tick);finish(true);}},1000);}
 function updateTimer(){$("timer").textContent="⏱️ "+remaining+"s";$("timer").classList.toggle("warning",remaining<=15);$("timeFill").style.width=(remaining/60*100)+"%";$("timeFill").style.background=remaining<=15?"#ff758f":"linear-gradient(90deg,#9175ff,#e3a4ff)";}
 function render(){const item=bank[level][index];answered=false;hintUsed=false;$("progressText").textContent="Pergunta "+(index+1)+"/5";$("question").textContent=item.q;$("answers").innerHTML="";$("feedback").classList.add("hidden");$("hintBtn").classList.remove("hidden");$("hintBtn").disabled=false;$("hintBtn").textContent="💡 Dica";$("nextBtn").classList.add("hidden");item.o.forEach((op,i)=>{const b=document.createElement("button");b.className="answer";b.textContent=String.fromCharCode(65+i)+") "+op;b.addEventListener("click",()=>choose(i));$("answers").appendChild(b);});}
 function choose(n){if(answered)return;answered=true;const item=bank[level][index],buttons=$("answers").querySelectorAll("button"),ok=n===item.a;buttons.forEach((b,i)=>{b.disabled=true;if(i===item.a)b.classList.add("correct");else if(i===n)b.classList.add("wrong");});if(ok){hits++;score+=hintUsed?10:20;}$("score").textContent=score;$("hits").textContent=hits;$("feedback").textContent=(ok?"✅ Correto! ":"❌ Quase! ")+item.e;$("feedback").classList.remove("hidden");$("hintBtn").classList.add("hidden");$("nextBtn").classList.remove("hidden");$("nextBtn").textContent=index===4?"Ver resultado 🏆":"Próxima ➜";}
 function hint(){if(answered||hintUsed)return;hintUsed=true;$("feedback").textContent="💡 Dica: "+bank[level][index].h;$("feedback").classList.remove("hidden");$("hintBtn").disabled=true;$("hintBtn").textContent="Dica usada";}
 function next(){if(index<4){index++;render();}else{finish(false);}}
 function finish(timeUp){clearInterval(tick);screen("result");$("resultAvatar").textContent=avatars[character];$("resultTitle").textContent=timeUp?"⏰ O tempo acabou!":"🏆 Desafio concluído!";$("resultText").textContent=character+" acertou "+hits+" de 5 perguntas e fez "+score+" pontos."+(timeUp?" O tempo terminou.":" Você terminou antes do fim do tempo!");$("finalScore").textContent=score;$("finalHits").textContent=hits+"/5";}
-$("startBtn").addEventListener("click",start);$("hintBtn").addEventListener("click",hint);$("nextBtn").addEventListener("click",next);$("againBtn").addEventListener("click",()=>{clearInterval(tick);screen("start");});
+$("difficulty").addEventListener("change",()=>{const t=timeLimits[$("difficulty").value];$("difficultyInfo").innerHTML="⏳ Você terá <strong>"+t+" segundos</strong> para resolver as 5 perguntas deste nível.";});\n$("startBtn").addEventListener("click",start);$("hintBtn").addEventListener("click",hint);$("nextBtn").addEventListener("click",next);$("againBtn").addEventListener("click",()=>{clearInterval(tick);screen("start");});
 </script>
 </body>
 </html>
