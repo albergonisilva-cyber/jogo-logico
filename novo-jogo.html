@@ -56,7 +56,8 @@ button:focus-visible{outline:3px solid #fff;outline-offset:3px}
 <body>
 <main class="card">
 <section id="start">
-<div style="text-align:center;font-size:42px">🧠</div>
+<div class="hero-mark">🧠</div>
+<div style="text-align:center"><div class="eyebrow">✦ DESAFIO MENTAL</div></div>
 <h1>Mente Lógica</h1>
 <p>Escolha seu personagem, corra contra o tempo e resolva os desafios!</p>
 <h2>Escolha seu personagem</h2>
@@ -110,18 +111,20 @@ dificil:[
 {q:"Se todos os blips são zargs e nenhum zarg é azul, um blip pode ser azul?",o:["Sim, sempre","Não","Só à noite","Não dá para saber"],a:1,h:"Os blips pertencem ao grupo dos zargs.",e:"Nenhum zarg é azul, então nenhum blip pode ser azul."}
 ]};
 const avatars={Luna:"🧙‍♀️",Theo:"🕵️‍♂️",Max:"🤖"};
-const timeLimits={facil:90,medio:60,dificil:40};\nlet character="Luna",level="facil",index=0,score=0,hits=0,remaining=90,maxTime=90,tick=null,answered=false,hintUsed=false;
+const timeLimits={facil:90,medio:60,dificil:40};
+let character="Luna",level="facil",index=0,score=0,hits=0,remaining=90,maxTime=90,tick=null,answered=false,hintUsed=false;
 const $=id=>document.getElementById(id);
 $("characters").addEventListener("click",e=>{const b=e.target.closest("button[data-name]");if(!b)return;character=b.dataset.name;document.querySelectorAll(".character").forEach(x=>x.classList.toggle("selected",x===b));});
 function screen(id){["start","game","result"].forEach(x=>$(x).classList.toggle("hidden",x!==id));}
 function start(){level=$("difficulty").value;index=0;score=0;hits=0;maxTime=timeLimits[level];remaining=maxTime;clearInterval(tick);$("who").textContent=avatars[character]+" "+character;$("levelLabel").textContent="Nível "+({facil:"fácil",medio:"médio",dificil:"difícil"}[level]);$("score").textContent=0;$("hits").textContent=0;screen("game");render();updateTimer();tick=setInterval(()=>{remaining--;updateTimer();if(remaining<=0){clearInterval(tick);finish(true);}},1000);}
-function updateTimer(){$("timer").textContent="⏱️ "+remaining+"s";$("timer").classList.toggle("warning",remaining<=15);$("timeFill").style.width=(remaining/60*100)+"%";$("timeFill").style.background=remaining<=15?"#ff758f":"linear-gradient(90deg,#9175ff,#e3a4ff)";}
+function updateTimer(){$("timer").textContent="⏱️ "+remaining+"s";const danger=Math.min(15,Math.ceil(maxTime*.25));$("timer").classList.toggle("warning",remaining<=danger);$("timeFill").style.width=(remaining/maxTime*100)+"%";$("timeFill").style.background=remaining<=danger?"linear-gradient(90deg,#ff758f,#ffb0bd)":"linear-gradient(90deg,#9175ff,#e3a4ff)";}
 function render(){const item=bank[level][index];answered=false;hintUsed=false;$("progressText").textContent="Pergunta "+(index+1)+"/5";$("question").textContent=item.q;$("answers").innerHTML="";$("feedback").classList.add("hidden");$("hintBtn").classList.remove("hidden");$("hintBtn").disabled=false;$("hintBtn").textContent="💡 Dica";$("nextBtn").classList.add("hidden");item.o.forEach((op,i)=>{const b=document.createElement("button");b.className="answer";b.textContent=String.fromCharCode(65+i)+") "+op;b.addEventListener("click",()=>choose(i));$("answers").appendChild(b);});}
 function choose(n){if(answered)return;answered=true;const item=bank[level][index],buttons=$("answers").querySelectorAll("button"),ok=n===item.a;buttons.forEach((b,i)=>{b.disabled=true;if(i===item.a)b.classList.add("correct");else if(i===n)b.classList.add("wrong");});if(ok){hits++;score+=hintUsed?10:20;}$("score").textContent=score;$("hits").textContent=hits;$("feedback").textContent=(ok?"✅ Correto! ":"❌ Quase! ")+item.e;$("feedback").classList.remove("hidden");$("hintBtn").classList.add("hidden");$("nextBtn").classList.remove("hidden");$("nextBtn").textContent=index===4?"Ver resultado 🏆":"Próxima ➜";}
 function hint(){if(answered||hintUsed)return;hintUsed=true;$("feedback").textContent="💡 Dica: "+bank[level][index].h;$("feedback").classList.remove("hidden");$("hintBtn").disabled=true;$("hintBtn").textContent="Dica usada";}
 function next(){if(index<4){index++;render();}else{finish(false);}}
 function finish(timeUp){clearInterval(tick);screen("result");$("resultAvatar").textContent=avatars[character];$("resultTitle").textContent=timeUp?"⏰ O tempo acabou!":"🏆 Desafio concluído!";$("resultText").textContent=character+" acertou "+hits+" de 5 perguntas e fez "+score+" pontos."+(timeUp?" O tempo terminou.":" Você terminou antes do fim do tempo!");$("finalScore").textContent=score;$("finalHits").textContent=hits+"/5";}
-$("difficulty").addEventListener("change",()=>{const t=timeLimits[$("difficulty").value];$("difficultyInfo").innerHTML="⏳ Você terá <strong>"+t+" segundos</strong> para resolver as 5 perguntas deste nível.";});\n$("startBtn").addEventListener("click",start);$("hintBtn").addEventListener("click",hint);$("nextBtn").addEventListener("click",next);$("againBtn").addEventListener("click",()=>{clearInterval(tick);screen("start");});
+$("difficulty").addEventListener("change",()=>{const t=timeLimits[$("difficulty").value];$("difficultyInfo").innerHTML="⏳ Você terá <strong>"+t+" segundos</strong> para resolver as 5 perguntas deste nível.";});
+$("startBtn").addEventListener("click",start);$("hintBtn").addEventListener("click",hint);$("nextBtn").addEventListener("click",next);$("againBtn").addEventListener("click",()=>{clearInterval(tick);screen("start");});
 </script>
 </body>
 </html>
