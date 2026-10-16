@@ -100,7 +100,9 @@ function finishGame(){showScreen("results");const total=levels[currentLevel].que
 function restartLevel(){startGame(currentLevel);}
 function goNextLevel(){const next={easy:"medium",medium:"hard",hard:"hard"}[currentLevel];startGame(next);}
 function goHome(){showScreen("home");updateRecords();}
-function readRecord(key){try{return Number(window.localStorage.getItem(key)||0)}catch(error){return 0;}}\nfunction writeRecord(key,value){try{window.localStorage.setItem(key,String(value))}catch(error){/* O jogo continua funcionando mesmo sem armazenamento local. */}}\nfunction updateRecords(){const labels=[["easy","Fácil"],["medium","Médio"],["hard","Difícil"]];const records=labels.map(([key,name])=>name+": "+readRecord("menteLogicaRecord_"+key)+" pts").join("　•　");$("bestScores").textContent="🏅 Seus recordes: "+records;}
+function readRecord(key){try{return Number(window.localStorage.getItem(key)||0)}catch(error){return 0;}}
+function writeRecord(key,value){try{window.localStorage.setItem(key,String(value))}catch(error){/* O jogo continua funcionando mesmo sem armazenamento local. */}}
+function updateRecords(){const labels=[["easy","Fácil"],["medium","Médio"],["hard","Difícil"]];const records=labels.map(([key,name])=>name+": "+readRecord("menteLogicaRecord_"+key)+" pts").join("　•　");$("bestScores").textContent="🏅 Seus recordes: "+records;}
 function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 updateRecords();
 </script>
